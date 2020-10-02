@@ -15,7 +15,7 @@ from astropy.wcs import WCS
 from . import six
 from .structure import Structure
 from .flux import UnitMetadataWarning
-from .progressbar import AnimatedProgressBar
+# from .progressbar import AnimatedProgressBar
 
 __all__ = ['ppv_catalog', 'pp_catalog']
 
@@ -627,11 +627,11 @@ def _make_catalog(structures, fields, metadata, statistic, verbose=False):
     except AttributeError:
         shape_tuple = None
 
-    if verbose:
-        print("Computing catalog for {0} structures".format(len(structures)))
-        progress_bar = AnimatedProgressBar(end=max(len(structures), 1), width=40, fill='=', blank=' ')
+    # if verbose:
+    #     print("Computing catalog for {0} structures".format(len(structures)))
+    #     progress_bar = AnimatedProgressBar(end=max(len(structures), 1), width=40, fill='=', blank=' ')
 
-    for struct in structures:
+    for struct in tqdm(structures):
 
         values = struct.values(subtree=True)
         indices = np.copy(struct.indices(subtree=True))
@@ -679,18 +679,18 @@ def _make_catalog(structures, fields, metadata, statistic, verbose=False):
                     new_row[x] = row[x]
         result.add_row(new_row)
 
-        # Print stats
-        if verbose:
-            progress_bar + 1
-            progress_bar.show_progress()
+        # # Print stats
+        # if verbose:
+        #     progress_bar + 1
+        #     progress_bar.show_progress()
 
 
     result.sort('_idx')
 
-    if verbose:
-        progress_bar.progress = 100  # Done
-        progress_bar.show_progress()
-        print("")  # newline
+    # if verbose:
+    #     progress_bar.progress = 100  # Done
+    #     progress_bar.show_progress()
+    #     print("")  # newline
 
 
     return result
@@ -724,7 +724,7 @@ def ppv_catalog(structures, metadata, fields=None, verbose=True):
 
     with warnings.catch_warnings():
         warnings.simplefilter("once" if verbose else 'ignore', category=MissingMetadataWarning)
-        warnings.simplefilter("once" if verbose else 'ignore', category=UnitMetadataWarning)        
+        warnings.simplefilter("once" if verbose else 'ignore', category=UnitMetadataWarning)
         return _make_catalog(structures, fields, metadata, PPVStatistic, verbose)
 
 

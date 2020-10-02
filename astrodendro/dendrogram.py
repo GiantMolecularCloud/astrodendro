@@ -10,7 +10,7 @@ import copy
 import warnings
 
 from .structure import Structure
-from .progressbar import AnimatedProgressBar
+# from .progressbar import AnimatedProgressBar
 from .io import IO_FORMATS
 from . import pruning
 from . import six
@@ -180,7 +180,7 @@ class Dendrogram(object):
 
         if verbose:
             print("Generating dendrogram using {:,} of {:,} pixels ({}% of data)".format(data_values.size, self.data.size, (100 * data_values.size / self.data.size)))
-            progress_bar = AnimatedProgressBar(end=max(data_values.size, 1), width=40, fill='=', blank=' ')
+            # progress_bar = AnimatedProgressBar(end=max(data_values.size, 1), width=40, fill='=', blank=' ')
 
         # Define index array indicating what structure each cell is part of
         # We expand each dimension by one, so the last value of each
@@ -195,7 +195,8 @@ class Dendrogram(object):
         # the pixel connects to any existing leaf. Otherwise, create new leaf.
         count = 0
 
-        for i in np.argsort(data_values)[::-1]:
+        from tqdm import tqdm
+        for i in tqdm(np.argsort(data_values)[::-1]):
 
             def next_idx():
                 return i + 1
@@ -204,11 +205,11 @@ class Dendrogram(object):
             data_value = data_values[i]
             coord = tuple(indices[i])
 
-            # Print stats
-            count += 1
-            if verbose and (count % 100 == 0):
-                progress_bar + 100
-                progress_bar.show_progress()
+            # # Print stats
+            # count += 1
+            # if verbose and (count % 100 == 0):
+            #     progress_bar + 100
+            #     progress_bar.show_progress()
 
             # Check if point is adjacent to any leaf
             # We don't worry about the edges, because overflow or underflow in
@@ -300,10 +301,10 @@ class Dendrogram(object):
                     # Update index map
                     m._fill_footprint(self.index_map, belongs_to.idx)
 
-        if verbose:
-            progress_bar.progress = 100  # Done
-            progress_bar.show_progress()
-            print("")  # newline
+        # if verbose:
+        #     progress_bar.progress = 100  # Done
+        #     progress_bar.show_progress()
+        #     print("")  # newline
 
         # Create trunk from objects with no ancestors
         _make_trunk(self, structures, is_independent)
