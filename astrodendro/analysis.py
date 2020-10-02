@@ -631,6 +631,7 @@ def _make_catalog(structures, fields, metadata, statistic, verbose=False):
     #     print("Computing catalog for {0} structures".format(len(structures)))
     #     progress_bar = AnimatedProgressBar(end=max(len(structures), 1), width=40, fill='=', blank=' ')
 
+    from tqdm import tqdm
     for struct in tqdm(structures):
 
         values = struct.values(subtree=True)
