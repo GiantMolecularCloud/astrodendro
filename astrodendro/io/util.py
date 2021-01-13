@@ -3,6 +3,7 @@ import numpy as np
 from .. import six
 from astropy.utils.console import ProgressBar
 from astropy import log
+from tqdm import tqdm
 
 
 def parse_newick(string):
@@ -152,7 +153,7 @@ def _fast_reader(index_map, data):
     assert len(idxs) == len(object_slices)
     log.debug('Creating index maps for {0} indices...'.format(len(idxs)))
 
-    p = ProgressBar(len(object_slices))
+    p = tqdm(len(object_slices))
     for idx,sl in zip(idxs, object_slices):
         match = index_map[sl] == idx
         sl2 = (slice(None),) + sl
@@ -161,7 +162,6 @@ def _fast_reader(index_map, data):
         dd = data[sl][match].tolist()
         flux_by_structure[idx] = dd
         indices_by_structure[idx] = coords
-        p.update()
 
     return flux_by_structure, indices_by_structure
 
@@ -180,7 +180,7 @@ def _slow_reader(index_map, data):
     indices = np.array(np.where(index_map > -1)).transpose()
 
     log.debug('Creating index maps for {0} coordinates...'.format(len(indices)))
-    for coord in ProgressBar(indices):
+    for coord in tqdm(indices):
         coord = tuple(coord)
         idx = index_map[coord]
         if idx in flux_by_structure:
